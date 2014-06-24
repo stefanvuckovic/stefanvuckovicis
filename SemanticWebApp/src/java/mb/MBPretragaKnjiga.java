@@ -9,8 +9,13 @@ package mb;
 import domain.Book;
 import domain.Person;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -34,7 +39,10 @@ public class MBPretragaKnjiga implements Serializable{
     
     List<Book> books;
     String term;
-    String currentTerm;
+    Date datumOd;
+    Date datumDo;
+    
+    String sortF=null;
     boolean prikazRezultata=false;
     int brojStrana;
     boolean novaPretraga=false;
@@ -57,25 +65,24 @@ public class MBPretragaKnjiga implements Serializable{
         System.out.println("Doslo dovde");
         lazyModel=new LazyDataModel<Book>() {
              private static final long    serialVersionUID    = 1L;
-             
+          
              @Override
              public List<Book> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
                 if(prikazRezultata){
-                    sbl.getDataFromNet();
-                    books = sbl.pretraziKnjige(term, first, first + pageSize);
                     
+                    sbl.getDataFromNet();
+                    System.out.println("KOLONA PO KOJOJ SE SORTIRA "+sortField);
+                    System.out.println("SORT ORDER "+sortOrder.toString());
+                    books = sbl.pretraziKnjige(term, datumOd, datumDo, first, first + pageSize, sortField, sortOrder.toString());
+                   
                     System.out.println("doslo u load");
-                    if(!term.equals(currentTerm)){
-                        novaPretraga=true;
-                        brojStrana=sbl.countBooks(term);
+                    if(!compare(sortField, sortF) || novaPretraga){
+                        brojStrana=sbl.countBooks(term, datumOd, datumDo, sortField);
                     }
-                    currentTerm=term;
                     setRowCount(brojStrana);
-                    //if(novaPretraga){
-//                        DataTable dataTable = (DataTable)  FacesContext.getCurrentInstance().getViewRoot().findComponent("tableBooksId");
-//                        dataTable.reset();
-//                        dataTable.resetValue();
-                    //}
+                    
+                    sortF=sortField;
+                    novaPretraga=false;
                     return books;
                 }
                 return null;
@@ -98,6 +105,24 @@ public class MBPretragaKnjiga implements Serializable{
         this.books = books;
     }
 
+    public Date getDatumOd() {
+        return datumOd;
+    }
+
+    public void setDatumOd(Date datumOd) {
+        this.datumOd = datumOd;
+    }
+
+    public Date getDatumDo() {
+        return datumDo;
+    }
+
+    public void setDatumDo(Date datumDo) {
+        this.datumDo = datumDo;
+    }
+    
+    
+
     public LazyDataModel<Book> getLazyModel() {
         return lazyModel;
     }
@@ -117,11 +142,15 @@ public class MBPretragaKnjiga implements Serializable{
     public String pretraziKnjige(){
         System.out.println("ulaz u metodu");
         
-        prikazRezultata=true;
         // dodati na stranici kod dugmeta onclick="tableBooks.getPaginator().setPage(0);"
         DataTable dataTable = (DataTable)  FacesContext.getCurrentInstance().getViewRoot().findComponent("tableBooksId");
         dataTable.reset();// jump to first page
-        //dataTable.resetValue();
+        dataTable.resetValue();
+        dataTable.setSortBy(null);
+        novaPretraga=true;
+        if(!prikazRezultata){
+            prikazRezultata=true;
+        }
      
         return null;
     }
@@ -145,4 +174,9 @@ public class MBPretragaKnjiga implements Serializable{
         }
         return s;
     } 
+    
+  
+    public static boolean compare(String str1, String str2) {
+        return (str1 == null ? str2 == null : str1.equals(str2));
+}
 }

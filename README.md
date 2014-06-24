@@ -64,10 +64,11 @@ Za parsiranje preuzetih podataka u XML formatu korišćena je dom4j. Dom4j je op
 ```
 
 Aplikacija koristi i Jenabean biblioteku, koja služi za mapiranje Java objekata u RDF triplete. Ovo mapiranje se vrši korišćenjem anotacija. Jenabean omogućava:
-*predstavljanje Java objekata preko RDF tripleta
-*vezuje atribute objekata za RDF propertije
-*čuva relacije ka drugim objektima
-*omogućava ponovno učitavanje objekata.
+* predstavljanje Java objekata preko RDF tripleta
+* vezuje atribute objekata za RDF propertije
+* čuva relacije ka drugim objektima
+* omogućava ponovno učitavanje objekata.
+
 Ispod je dat primer mapiranja korišćenjem anotacija:
 
 ```

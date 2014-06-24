@@ -4,11 +4,11 @@ semanticwebapp
 Tema ovog projekta je kreiranje web aplikacije koja će omogućiti integraciju i pretragu podataka o knjigama. Naime, potrebno je preuzeti podatke o knjigama sa različitih izvora na webu i izvršiti njihovu integraciju u lokalni repozitorijum. Nakon preuzimanja podataka, potrebno ih je predstaviti korišćenjem odgovarajućeg RDF vokabulara (npr. schema:Book). Podatke treba smestiti u lokalni RDF repozitorijum (npr. Jena TDB). Potrebno je implementirati jednostavan interfejs za pretragu ovih podataka korišćenjem SPARQL upita koji će se izvršavati nad lokalnim RDF repozitorijumom.
 
 Osnovne faze u razvoju aplikacije:
-*preuzimanje podataka sa različitih izvora na webu
-*parsiranje podataka i njihova integracija
-*predstavljanje podataka korišćenjem odgovarajućeg RDF vokabulara
-*čuvanje podataka u lokalni RDF repozitorijum
-*implementacija interfejsa za pretragu podataka
+* preuzimanje podataka sa različitih izvora na webu
+* parsiranje podataka i njihova integracija
+* predstavljanje podataka korišćenjem odgovarajućeg RDF vokabulara
+* čuvanje podataka u lokalni RDF repozitorijum
+* implementacija interfejsa za pretragu podataka
 
 #2. Domenski model
 Nakon analize podataka koje pružaju odabrani izvori podataka, kao i podataka koje podržava odabrani RDF vokabular kreiran je domenski model i prikazan je na slici ispod (Slika 1).
@@ -25,21 +25,21 @@ Klasa Organization sadrži informaciju o imenu organizacije.
 Aplikacija je napisana u programskom jeziku Java. 
 
 Prilikom realizacije web aplikacije korišćene su sledeće Java tehnologije:
-1. Java Server Faces (JSF) sa Primefaces bibliotekom - za realizaciju korisničkog interfejsa
+1. Java Server Faces (JSF) sa Primefaces bibliotekom - za realizaciju korisničkog interfejsa.
 JavaServer Faces (JSF) je okvir korišćen na serverskoj strani (server-side component
 framework) za izradu korisničkog interfejsa (user interface - UI) u web aplikacijama koje se
 zasnivaju na Java tehnologiji. Jedna od najvećih prednosti JSF okvira je ta što nudi jasnu odvojenost između prezentacije i ponašanja sistema.
-2. EJB - za realizaciju poslovne logike aplikacije
+2. EJB - za realizaciju poslovne logike aplikacije.
 Enterprise Java Beans su JavaEE server-side komponente koje se izvršavaju unutar EJB kontejnera
 i učauruju poslovnu logiku JavaEE aplikacija. Ove komponente su skalabilne, transakcione,
 višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ovi pojednostavljuju razvoj distribuiranih aplikacija iz sledecih razloga:
-*EJB kontejner obezbeđuje sistemske servise (npr.upravljanje transakcijama) enterprise
+* EJB kontejner obezbeđuje sistemske servise (npr.upravljanje transakcijama) enterprise
 bean-ovima, dok se programer bean-a moze koncentrisati na rešavanje poslovnih
 problema.
-*Bean-ovi, a ne klijenti, sadrže poslovnu logiku aplikacije, dok se programer klijenta može
+* Bean-ovi, a ne klijenti, sadrže poslovnu logiku aplikacije, dok se programer klijenta može
 fokusirati na predstavljanje klijenta. Programer klijenta ne mora da piše kod rutina
 koje implementiraju poslovna pravila ili pristup bazama podataka.
-*Enterprise bean-ovi su prenosive komponente. Ove aplikacije se mogu izvršavati na
+* Enterprise bean-ovi su prenosive komponente. Ove aplikacije se mogu izvršavati na
 bilo kojem kompatibilnom Java EE serveru.
 
 Za parsiranje preuzetih podataka u JSON formatu korišćena je JSON.simple biblioteka koja omogućava veoma jednostavno parsiranje. Kao što se može videti u primeru ispod, potrebno je metodi parse JSONParser objekta proslediti JSON tekst kako bi se izvršilo parsiranje nakon čega se veoma jednostavno izvlače željeni podaci pomoću objekata JSONArray (ako je u pitanju niz) i JSONObject (ako je reč o JSON objektu).

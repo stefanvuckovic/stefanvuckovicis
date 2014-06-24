@@ -10,15 +10,15 @@ predstavljanje podataka korišćenjem odgovarajućeg RDF vokabulara
 čuvanje podataka u lokalni RDF repozitorijum
 implementacija interfejsa za pretragu podataka
 
-2. Domenski model
+#2. Domenski model
 Nakon analize podataka koje pružaju odabrani izvori podataka, kao i podataka koje podržava odabrani RDF vokabular kreiran je domenski model i prikazan je na slici ispod (Slika 1).
 
 
 Klasa Book sadrži osnovne podatke o knjizi kao što su: isbn, naslov knjige, broj strana, datum objavljivanja, kratak opis knjige kao i podatke o autorima preko reference na klasu Person i izdavaču knjige preko reference na klasu Organization.
 Klasa Person sadrži informaciju o imenu osobe.
 Klasa Organization sadrži informaciju o imenu organizacije.
-3. Dizajn
-4. Implementacija
+#3. Dizajn
+#4. Implementacija
 Aplikacija je napisana u programskom jeziku Java. 
 
 Prilikom realizacije web aplikacije korišćene su sledeće Java tehnologije:
@@ -82,7 +82,7 @@ Prilikom razvoja aplikacije korišćena je i Jena TDB biblioteka. Jena TDB je bi
 
 Za omogućavanje pretrage podataka korišćen je SPARQL. SPARQL je RDF upitni jezik pomoću koga je moguće čitati i manipulisati podacima u RDF formatu. 
 
-5. Priznanja
+#5. Priznanja
 Ova aplikacija je razvijena za potrebe seminarskog rada iz predmeta Inteligentni sistemi na Fakultetu organizacionih nauka, Univerzitet u Beogradu, Srbija.
 
 

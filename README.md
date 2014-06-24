@@ -93,9 +93,9 @@ Ispod je dat primer mapiranja korišćenjem anotacija:
     }
 ```
         
-Prilikom razvoja aplikacije korišćena je i Jena TDB biblioteka. Jena TDB je biblioteka koja se koristi za čuvanje podataka u RDF repozitorijum.
+Prilikom razvoja aplikacije korišćena je i Jena TDB biblioteka. Jena TDB je biblioteka koja se koristi za perzistenciju, odnosno čuvanje podataka u RDF repozitorijumu.
 
-Za omogućavanje pretrage podataka korišćen je SPARQL. SPARQL je RDF upitni jezik pomoću koga je moguće čitati i manipulisati podacima u RDF formatu. 
+Kako bi se omogućila pretraga podataka korišćen je SPARQL. SPARQL je RDF upitni jezik pomoću koga je moguće čitati i manipulisati podacima u RDF formatu. 
 
 #5. Priznanja
 Ova aplikacija je razvijena za potrebe seminarskog rada iz predmeta Inteligentni sistemi na Fakultetu organizacionih nauka, Univerzitet u Beogradu, Srbija.

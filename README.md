@@ -47,20 +47,20 @@ višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ov
 Za parsiranje preuzetih podataka u JSON formatu korišćena je JSON.simple biblioteka koja omogućava veoma jednostavno parsiranje. Kao što se može videti u primeru ispod, potrebno je metodi parse JSONParser objekta proslediti JSON tekst kako bi se izvršilo parsiranje nakon čega se veoma jednostavno izvlače željeni podaci pomoću objekata JSONArray (ako je u pitanju niz) i JSONObject (ako je reč o JSON objektu).
 
 ```
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(tekst);
-        JSONObject jsonObject = (JSONObject) obj;
-        JSONArray niz=(JSONArray) jsonObject.get("items");
+    JSONParser parser = new JSONParser();
+    Object obj = parser.parse(tekst);
+    JSONObject jsonObject = (JSONObject) obj;
+    JSONArray niz=(JSONArray) jsonObject.get("items");
 ```
 
 Za parsiranje preuzetih podataka u XML formatu korišćena je dom4j. Dom4j je open source XML okvir (framework) za programski jezik Java koji omogućava čitanje, pisanje, navigaciju, kreiranje i modifikaciju XML dokumenata. U primeru ispod se može videti kako se XML dokument može parsirati, a zatim i kako se može vršiti navigacija kroz čvorove dokumenta i čitanje podataka.
 
 ```
-	Document document=DocumentHelper.parseText(tekst);
-	List list=document.selectNodes("//result");
-	Node node=(Node) list.get(0);
-	Node isbn=node.selectSingleNode("isbn13");
-	System.out.println(isbn.getText());
+    Document document=DocumentHelper.parseText(tekst);
+    List list=document.selectNodes("//result");
+    Node node=(Node) list.get(0);
+    Node isbn=node.selectSingleNode("isbn13");
+    System.out.println(isbn.getText());
 ```
 
 Aplikacija koristi i Jenabean biblioteku, koja služi za mapiranje Java objekata u RDF triplete. Ovo mapiranje se vrši korišćenjem anotacija. Jenabean omogućava:
@@ -71,25 +71,25 @@ Aplikacija koristi i Jenabean biblioteku, koja služi za mapiranje Java objekata
 Ispod je dat primer mapiranja korišćenjem anotacija:
 
 ```
-	@Namespace(Constants.SCHEMA)
-	@RdfType("Book")
-	public class Book extends Thing{
-    		@RdfProperty(Constants.SCHEMA+"isbn")
-    		private String isbn;
-		@RdfProperty(Constants.SCHEMA+"name")
-		private String title;
-		@RdfProperty(Constants.SCHEMA+"numberOfPages")
-		private int numberOfPages;
-		@RdfProperty(Constants.SCHEMA+"author")
-		private List<Person> authors;
-		@RdfProperty(Constants.SCHEMA+"publisher")
-		private Organization publisher;
-		@RdfProperty(Constants.SCHEMA+"datePublished")
-		private Date datePublished;
-		@RdfProperty(Constants.SCHEMA+"description")
-		private String description;
-		...
-        }
+    @Namespace(Constants.SCHEMA)
+    @RdfType("Book")
+    public class Book extends Thing{
+    	    @RdfProperty(Constants.SCHEMA+"isbn")
+    	    private String isbn;
+	    @RdfProperty(Constants.SCHEMA+"name")
+	    private String title;
+	    @RdfProperty(Constants.SCHEMA+"numberOfPages")
+	    private int numberOfPages;
+	    @RdfProperty(Constants.SCHEMA+"author")
+	    private List<Person> authors;
+	    @RdfProperty(Constants.SCHEMA+"publisher")
+	    private Organization publisher;
+	    @RdfProperty(Constants.SCHEMA+"datePublished")
+	    private Date datePublished;
+	    @RdfProperty(Constants.SCHEMA+"description")
+	    private String description;
+	    ...
+    }
 ```
         
 Prilikom razvoja aplikacije korišćena je i Jena TDB biblioteka. Jena TDB je biblioteka koja se koristi za čuvanje podataka u RDF repozitorijum.

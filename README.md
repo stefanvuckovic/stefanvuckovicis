@@ -46,12 +46,12 @@ višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ov
 
 Za parsiranje preuzetih podataka u JSON formatu korišćena je JSON.simple biblioteka koja omogućava veoma jednostavno parsiranje. Kao što se može videti u primeru ispod, potrebno je metodi parse JSONParser objekta proslediti JSON tekst kako bi se izvršilo parsiranje nakon čega se veoma jednostavno izvlače željeni podaci pomoću objekata JSONArray (ako je u pitanju niz) i JSONObject (ako je reč o JSON objektu).
 
-    ```
+```
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(tekst);
         JSONObject jsonObject = (JSONObject) obj;
         JSONArray niz=(JSONArray) jsonObject.get("items");
-    ```
+```
 
 Za parsiranje preuzetih podataka u XML formatu korišćena je dom4j. Dom4j je open source XML okvir (framework) za programski jezik Java koji omogućava čitanje, pisanje, navigaciju, kreiranje i modifikaciju XML dokumenata. U primeru ispod se može videti kako se XML dokument može parsirati, a zatim i kako se može vršiti navigacija kroz čvorove dokumenta i čitanje podataka.
 

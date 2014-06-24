@@ -46,7 +46,7 @@ višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ov
 
 Za parsiranje preuzetih podataka u JSON formatu korišćena je JSON.simple biblioteka koja omogućava veoma jednostavno parsiranje. Kao što se može videti u primeru ispod, potrebno je metodi parse JSONParser objekta proslediti JSON tekst kako bi se izvršilo parsiranje nakon čega se veoma jednostavno izvlače željeni podaci pomoću objekata JSONArray (ako je u pitanju niz) i JSONObject (ako je reč o JSON objektu).
 
-    ```java
+    ```
     JSONParser parser = new JSONParser();
     Object obj = parser.parse(tekst);
     JSONObject jsonObject = (JSONObject) obj;

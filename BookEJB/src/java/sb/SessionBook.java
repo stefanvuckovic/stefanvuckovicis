@@ -52,7 +52,7 @@ public class SessionBook implements SessionBookLocal {
     public void getDataFromNet() {
         System.out.println("pocetak metode");
         Path path=Paths.get("tdb");
-        
+//       
 //        if(Files.exists(path)){
 //            
 //            System.out.println("nasao folder usao da izbrise");

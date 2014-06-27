@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -70,24 +71,24 @@ public class SessionBook implements SessionBookLocal {
         if(!Files.exists(path)){
             System.out.println("usao");
             
-            List<Book> lista3=(List<Book>) new BookshareWS().getData();
-            List<Book> lista1=(List<Book>) new IsbndbWS().getData();
-            List<Book> lista2=(List<Book>) new GoogleBooksWS().getData();
+            List<Book> listBS=(List<Book>) new BookshareWS().getData();
+            List<Book> listI=(List<Book>) new IsbndbWS().getData();
+            List<Book> listGB=(List<Book>) new GoogleBooksWS().getData();
             
             System.out.println("dovlaci podatke");
             
-            integrisiPodatke(lista2, lista1, lista3);
+            integrateData(listGB, listI, listBS);
             try{
                 RDFModel.getInstance().beginWriteTransaction();
                 RDFModel.getInstance().setPrefixes();
 
-                for(Book b:lista1){
+                for(Book b:listI){
                     RDFModel.getInstance().save(b);
                 }
-                for(Book b:lista2){
+                for(Book b:listGB){
                     RDFModel.getInstance().save(b);
                 }
-                for(Book b:lista3){
+                for(Book b:listBS){
                     RDFModel.getInstance().save(b);
                 }
                 
@@ -98,27 +99,20 @@ public class SessionBook implements SessionBookLocal {
             }finally{
                 RDFModel.getInstance().endTransaction();
             }
-        }
-        
-        
-        
-        //RDFModel.getInstance().printOut();
-        
-        //RDFModel.getInstance().closeDataModel();
-    }
+        }    }
     
     @Override
-    public List<Book> pretraziKnjige(String term,int offset, int limit){
+    public List<Book> searchBooks(String term, Date dateFrom, Date dateTo, int offset, int limit, String sortField, String sortOrder){
         System.out.println("Ulazak u metodu pretraziKnjige");
-        List<Book> lista=new ArrayList<>();
+        List<Book> list=new ArrayList<>();
         //BookQueries bq=new BookQueries();
-        Collection<String> books=bq.searchBooks(term, offset, limit);
+        Collection<String> books=bq.searchBooks(term, dateFrom, dateTo, offset, limit, sortField, sortOrder );
         Iterator i=books.iterator();
         while(i.hasNext()){
             String s=(String) i.next();
             System.out.println(s);
             Book b=(Book) RDFModel.getInstance().load(s);
-            lista.add(b);
+            list.add(b);
         }
         
 //        for(Book book:lista){
@@ -129,18 +123,18 @@ public class SessionBook implements SessionBookLocal {
 //        
 //      
 //        }
-        return lista;
+        return list;
     }
     
     @Override
-    public int countBooks(String term){
+    public int countBooks(String term, Date dateFrom, Date dateTo, String sortField){
         System.out.println("Usao u metodu countBooks");
-        return bq.countBooks(term);
+        return bq.countBooks(term, dateFrom, dateTo, sortField);
     }
     
-    private Book nadjiKnjiguUListi(List<Book> lista, Book b){
+    private Book findTheBook(List<Book> list, Book b){
         Book foundBook=null;
-        for(Book book:lista){
+        for(Book book:list){
             if (b.getIsbn().equals(book.getIsbn())){
                 foundBook=book;
                 break;
@@ -152,12 +146,12 @@ public class SessionBook implements SessionBookLocal {
         
     }
 
-    private void integrisiPodatke(List<Book> lista1,List<Book> lista2, List<Book> lista3){
-       for(Book b:lista1){
+    private void integrateData(List<Book> list1,List<Book> list2, List<Book> list3){
+       for(Book b:list1){
                 if(b.getIsbn()!=null){
                     //System.out.println("fali podatak");
-                    Book book1=nadjiKnjiguUListi(lista2, b);
-                    Book book2=nadjiKnjiguUListi(lista3, b);
+                    Book book1=findTheBook(list2, b);
+                    Book book2=findTheBook(list3, b);
                     if(book1!=null){
                         System.out.println("Nasao tu knjigu kod prvog");
                         System.out.println("ISBN duple knjige "+b.getIsbn());
@@ -174,7 +168,7 @@ public class SessionBook implements SessionBookLocal {
                             }
                         }
                         
-                        lista2.remove(book1);
+                        list2.remove(book1);
                     }
                     
                     if(book2!=null){
@@ -193,25 +187,25 @@ public class SessionBook implements SessionBookLocal {
                             System.out.println("Nedostajuci podatak google books opis "+book2.getDescription());
                             b.setDescription(book2.getDescription());
                         }
-                        lista3.remove(book2);
+                        list3.remove(book2);
                     }
                     
                     
                 }
             }
        
-            for(Book b:lista2){
+            for(Book b:list2){
                 if(b.getIsbn()!=null){
                     //System.out.println("fali podatak");
                    
-                    Book book=nadjiKnjiguUListi(lista3, b);
+                    Book book=findTheBook(list3, b);
                     if(book!=null){
                         System.out.println("Nasao knjigu ISBNDB kod BookShare");
                         if("".equals(b.getDescription()) || b.getDescription()==null){
                             System.out.println("Nedostajuci podatak "+book.getDescription());
                             b.setDescription(book.getDescription());
                         }
-                        lista3.remove(book);
+                        list3.remove(book);
                     }
                     
                        

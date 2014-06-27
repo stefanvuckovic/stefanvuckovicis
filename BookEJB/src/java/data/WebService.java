@@ -22,18 +22,18 @@ import java.util.List;
  */
 public abstract class WebService {
    
-    List<Book> lista;
+    List<Book> books;
     
     
     public WebService(){
-        lista=new ArrayList<>();
+        books=new ArrayList<>();
     }
     
     public List<Book> getData(){
         
         try {
                
-            while(!daLiJeKraj()){
+            while(!end()){
                 String tekst=getDataFromApi();               
                 parse(tekst);
             }
@@ -42,7 +42,7 @@ public abstract class WebService {
         }catch(Exception e){
             e.printStackTrace();
         }
-        return lista; 
+        return books; 
     }
     
     public String getDataFromApi() throws Exception{
@@ -63,16 +63,16 @@ public abstract class WebService {
                 
                 BufferedReader br = new BufferedReader(new InputStreamReader(
                         (conn.getInputStream())));
-                String tekst="";
+                String text="";
                 String output;
                 
                 while ((output = br.readLine()) != null) {
                    
-                    tekst+=output;
+                    text+=output;
                 }
                 
                 conn.disconnect();
-                return tekst;
+                return text;
                 
         }catch(Exception e){
             e.printStackTrace();
@@ -88,6 +88,6 @@ public abstract class WebService {
     
     public abstract void setDataType(HttpURLConnection conn);
 
-    public abstract boolean daLiJeKraj();
+    public abstract boolean end();
         
 }

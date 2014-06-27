@@ -30,8 +30,8 @@ import rdfmodel.RDFModel;
  */
 public class BookshareWS extends WebService{
 
-    private boolean kraj=false;
-    private int trenutnaStrana=1;
+    private boolean end=false;
+    private int currentPageNumber=1;
     private String baseUrl="https://api.bookshare.org/book/search/category/Computers%20and%20Internet/page/";
     String apiKey="?api_key=mtdgrvurm6vhszb7xxtxc768";
     @Override
@@ -44,9 +44,9 @@ public class BookshareWS extends WebService{
                     //System.out.println("Velicina liste "+list.size());
                     if(list==null || list.size()==0){
                         System.out.println("Lista je null");
-                        kraj=true;
+                        end=true;
                     }else{
-                        System.out.println("Trenutni broj strana "+trenutnaStrana);
+                        System.out.println("Trenutni broj strana "+currentPageNumber);
                         for(int i=0;i<list.size();i++){
                             Book b=new Book();
                             b.setUri(URIGenerator.generateUri(b));
@@ -78,10 +78,10 @@ public class BookshareWS extends WebService{
                             if(description!=null){
                                 b.setDescription(description.getText());
                             }
-                            lista.add(b);
+                            books.add(b);
 
                         }
-                        trenutnaStrana++;
+                        currentPageNumber++;
                         //kraj=true;
                     }
 
@@ -93,7 +93,7 @@ public class BookshareWS extends WebService{
 
     @Override
     public String getUrl() {
-        return baseUrl+trenutnaStrana+apiKey;
+        return baseUrl+currentPageNumber+apiKey;
         //return "https://api.bookshare.org/book/search/category/Computers%20and%20Internet?api_key=mtdgrvurm6vhszb7xxtxc768";
     }
 
@@ -113,8 +113,8 @@ public class BookshareWS extends WebService{
     }
 
     @Override
-    public boolean daLiJeKraj() {
-        return kraj;
+    public boolean end() {
+        return end;
     }
     
     

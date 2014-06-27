@@ -7,6 +7,7 @@
 package sb;
 
 import domain.Book;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -18,7 +19,7 @@ import javax.ejb.Local;
 public interface SessionBookLocal {
     public void getDataFromNet();
 
-    public List<Book> pretraziKnjige(String term, int offset, int limit);
+    public List<Book> searchBooks(String term,Date dateFrom, Date dateTo, int offset, int limit, String sortField, String sortOrder);
 
-    public int countBooks(String term);
+    public int countBooks(String term, Date dateFrom, Date dateTo, String sortField);
 }

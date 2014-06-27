@@ -36,7 +36,7 @@ public class Book extends Thing{
     @RdfProperty(Constants.SCHEMA+"publisher")
     private Organization publisher;
     @RdfProperty(Constants.SCHEMA+"datePublished")
-    private String datePublished;
+    private Date datePublished;
     @RdfProperty(Constants.SCHEMA+"description")
     private String description;
     
@@ -83,11 +83,11 @@ public class Book extends Thing{
         this.publisher = publisher;
     }
 
-    public String getDatePublished() {
+    public Date getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(String datePublished) {
+    public void setDatePublished(Date datePublished) {
         this.datePublished = datePublished;
     }
 

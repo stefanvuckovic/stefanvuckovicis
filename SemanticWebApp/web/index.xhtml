@@ -12,47 +12,47 @@
     <h:body>
          <h:form id="frmPretraga">   
              ISBN/Naslov knjige/Autor: <h:inputText  value="#{mBPretragaKnjiga.term}"/>
-             Datum od: <p:calendar value="#{mBPretragaKnjiga.datumOd}" />
-             Datum do: <p:calendar value="#{mBPretragaKnjiga.datumDo}" />
+             Datum od: <p:calendar value="#{mBPretragaKnjiga.dateFrom}" />
+             Datum do: <p:calendar value="#{mBPretragaKnjiga.dateTo}" />
              <h:outputText value="&#160;" />
              <h:outputText value="&#160;" />
-             <p:commandButton value="Trazi" action="#{mBPretragaKnjiga.pretraziKnjige()}" update=":pnlgDetalji" />
+             <p:commandButton value="Trazi" action="#{mBPretragaKnjiga.searchBooks()}" update=":pnlgDetalji" />
                     
          </h:form>
         
         <h:panelGrid id="pnlgDetalji">
-            <h:panelGrid rendered="#{mBPretragaKnjiga.daLiPostojePodaci()}" columns="2">
-                <p:dataTable value="#{mBPretragaKnjiga.lazyModel}" id="tableBooksId" widgetVar="tableBooks" var="knjiga" 
+            <h:panelGrid rendered="#{mBPretragaKnjiga.renderResults()}" columns="2">
+                <p:dataTable value="#{mBPretragaKnjiga.lazyModel}" id="tableBooksId" widgetVar="tableBooks" var="book" 
                              rows="10"
                                  paginator="true"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="5,10,15"
                          lazy="true">>
-                    <p:column headerText="naslov" sortBy="#{knjiga.title}">
-                            #{knjiga.title}
+                    <p:column headerText="naslov" sortBy="#{book.title}">
+                            #{book.title}
                     </p:column>
                     <p:column headerText="isbn">
-                            #{knjiga.isbn}
+                            #{book.isbn}
                     </p:column>
                     
-                    <p:column headerText="datum objavljivanja" sortBy="#{knjiga.datePublished}">
-                            #{knjiga.datePublished}
+                    <p:column headerText="datum objavljivanja" sortBy="#{book.datePublished}">
+                            #{book.datePublished}
                     </p:column>
                     
                     <p:column headerText="broj strana">
-                            #{knjiga.numberOfPages}
+                            #{book.numberOfPages}
                     </p:column>
                     
                     <p:column headerText="opis">
-                            #{knjiga.description}
+                            #{book.description}
                     </p:column>
                     
                     <p:column headerText="izdavac">
-                            #{knjiga.publisher.name}
+                            #{book.publisher.name}
                     </p:column>
                     
                     <p:column headerText="autor">
-                            #{mBPretragaKnjiga.vratiAutoreZaKnjigu(knjiga)}
+                            #{mBPretragaKnjiga.getAuthorsForBook(book)}
                     </p:column>
                        
                     </p:dataTable>  

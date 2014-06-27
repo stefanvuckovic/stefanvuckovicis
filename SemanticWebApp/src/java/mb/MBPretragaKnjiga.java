@@ -39,13 +39,13 @@ public class MBPretragaKnjiga implements Serializable{
     
     List<Book> books;
     String term;
-    Date datumOd;
-    Date datumDo;
+    Date dateFrom;
+    Date dateTo;
     
     String sortF=null;
-    boolean prikazRezultata=false;
-    int brojStrana;
-    boolean novaPretraga=false;
+    boolean renderResults=false;
+    int numberOfPages;
+    boolean newSearch=false;
     
     /**
      * Creates a new instance of MBPretragaKnjiga
@@ -68,21 +68,21 @@ public class MBPretragaKnjiga implements Serializable{
           
              @Override
              public List<Book> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
-                if(prikazRezultata){
+                if(renderResults){
                     
                     sbl.getDataFromNet();
                     System.out.println("KOLONA PO KOJOJ SE SORTIRA "+sortField);
                     System.out.println("SORT ORDER "+sortOrder.toString());
-                    books = sbl.pretraziKnjige(term, datumOd, datumDo, first, first + pageSize, sortField, sortOrder.toString());
+                    books = sbl.searchBooks(term, dateFrom, dateTo, first, first + pageSize, sortField, sortOrder.toString());
                    
                     System.out.println("doslo u load");
-                    if(!compare(sortField, sortF) || novaPretraga){
-                        brojStrana=sbl.countBooks(term, datumOd, datumDo, sortField);
+                    if(!compare(sortField, sortF) || newSearch){
+                        numberOfPages=sbl.countBooks(term, dateFrom, dateTo, sortField);
                     }
-                    setRowCount(brojStrana);
+                    setRowCount(numberOfPages);
                     
                     sortF=sortField;
-                    novaPretraga=false;
+                    newSearch=false;
                     return books;
                 }
                 return null;
@@ -105,20 +105,20 @@ public class MBPretragaKnjiga implements Serializable{
         this.books = books;
     }
 
-    public Date getDatumOd() {
-        return datumOd;
+    public Date getDateFrom() {
+        return dateFrom;
     }
 
-    public void setDatumOd(Date datumOd) {
-        this.datumOd = datumOd;
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
     }
 
-    public Date getDatumDo() {
-        return datumDo;
+    public Date getDateTo() {
+        return dateTo;
     }
 
-    public void setDatumDo(Date datumDo) {
-        this.datumDo = datumDo;
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
     }
     
     
@@ -139,7 +139,7 @@ public class MBPretragaKnjiga implements Serializable{
         System.out.println("inicijalizacija konstruktora beana");
     }
     
-    public String pretraziKnjige(){
+    public String searchBooks(){
         System.out.println("ulaz u metodu");
         
         // dodati na stranici kod dugmeta onclick="tableBooks.getPaginator().setPage(0);"
@@ -147,20 +147,20 @@ public class MBPretragaKnjiga implements Serializable{
         dataTable.reset();// jump to first page
         dataTable.resetValue();
         dataTable.setSortBy(null);
-        novaPretraga=true;
-        if(!prikazRezultata){
-            prikazRezultata=true;
+        newSearch=true;
+        if(!renderResults){
+            renderResults=true;
         }
      
         return null;
     }
     
-    public boolean daLiPostojePodaci(){
+    public boolean renderResults(){
         //return books != null;
-        return prikazRezultata;
+        return renderResults;
     }
     
-    public String vratiAutoreZaKnjigu(Book b){
+    public String getAuthorsForBook(Book b){
         String s="";
         boolean prvi=true;
         for(Person p:b.getAuthors()){

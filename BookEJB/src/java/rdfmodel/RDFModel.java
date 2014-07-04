@@ -15,13 +15,17 @@ import com.hp.hpl.jena.util.FileManager;
 import com.sun.xml.ws.rx.mc.dev.AdditionalResponses;
 
 import domain.util.Constants;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RDFModel {
 
 	private RDF2Bean reader;
 	private Bean2RDF writer;
 	
-	private static final String directory = "tdb";
+	private static String directory = "tdb";
 	private Dataset dataset;
 
 	private static RDFModel instance;
@@ -103,4 +107,14 @@ public class RDFModel {
         public void endTransaction(){
             dataset.end();
         }
+        
+        public void writeToFile(String fileName){
+            try {
+                getModel().write(new FileOutputStream(fileName), "TURTLE");
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+       
 }

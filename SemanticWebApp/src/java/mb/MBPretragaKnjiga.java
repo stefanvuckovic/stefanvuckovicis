@@ -21,6 +21,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
@@ -36,7 +37,7 @@ import sb.SessionBookLocal;
 public class MBPretragaKnjiga implements Serializable{
 
     private static final long serialVersionUID = -1201944101993687165L;
-    
+   
     List<Book> books;
     String term;
     Date dateFrom;
@@ -69,11 +70,11 @@ public class MBPretragaKnjiga implements Serializable{
              @Override
              public List<Book> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
                 if(renderResults){
-                    
+                    //String path=FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
                     sbl.getDataFromNet();
                     System.out.println("KOLONA PO KOJOJ SE SORTIRA "+sortField);
                     System.out.println("SORT ORDER "+sortOrder.toString());
-                    books = sbl.searchBooks(term, dateFrom, dateTo, first, first + pageSize, sortField, sortOrder.toString());
+                    books = sbl.searchBooks(term, dateFrom, dateTo, first, pageSize, sortField, sortOrder.toString());
                    
                     System.out.println("doslo u load");
                     if(!compare(sortField, sortF) || newSearch){

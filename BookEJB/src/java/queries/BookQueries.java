@@ -96,12 +96,13 @@ public class BookQueries {
         if (sort != null) {
             query += sort;
         }
-        if (limit != null) {
-            query += limit;
-        }
         if (offset != null) {
             query += offset;
         }
+        if (limit != null) {
+            query += limit;
+        }
+        
 
         System.out.println("UPIT: " + query);
         RDFModel.getInstance().beginReadTransaction();

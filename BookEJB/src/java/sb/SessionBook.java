@@ -50,7 +50,7 @@ public class SessionBook implements SessionBookLocal {
 
     @Override
     public void getDataFromNet() {
-        System.out.println("pocetak metode");
+       
         Path path=Paths.get("tdb");
 //       
 //        if(Files.exists(path)){
@@ -67,14 +67,23 @@ public class SessionBook implements SessionBookLocal {
 //            }
 //            file.delete();
 //        }
+//        
         
+//        RDFModel.getInstance().beginReadTransaction();
+//            try {
+//                RDFModel.getInstance().writeToFile("C:\\Users\\Stefan\\books.rdf");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                RDFModel.getInstance().endTransaction();
+//            }
         if(!Files.exists(path)){
             System.out.println("usao");
             
             List<Book> listBS=(List<Book>) new BookshareWS().getData();
             List<Book> listI=(List<Book>) new IsbndbWS().getData();
             List<Book> listGB=(List<Book>) new GoogleBooksWS().getData();
-            
+//            
             System.out.println("dovlaci podatke");
             
             integrateData(listGB, listI, listBS);
@@ -92,6 +101,7 @@ public class SessionBook implements SessionBookLocal {
                     RDFModel.getInstance().save(b);
                 }
                 
+                
                 RDFModel.getInstance().commit();
             }catch(Exception e){
                 e.printStackTrace();
@@ -99,6 +109,17 @@ public class SessionBook implements SessionBookLocal {
             }finally{
                 RDFModel.getInstance().endTransaction();
             }
+            
+            RDFModel.getInstance().beginReadTransaction();
+            try {
+                RDFModel.getInstance().writeToFile("C:\\Users\\Stefan\\books.rdf");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                RDFModel.getInstance().endTransaction();
+            }
+            
+            
         }    }
     
     @Override

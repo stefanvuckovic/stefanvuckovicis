@@ -27,7 +27,17 @@ Klasa Person sadrži informaciju o imenu osobe.
 Klasa Organization sadrži informaciju o imenu organizacije.
 
 #3. Rešenje
-Aplikacija preuzima podatke iz tri različita izvora sa web-a ([Bokshare](http://developer.bookshare.org/), [ISBNdb](http://isbndb.com/), [Google books](https://developers.google.com/books/?csw=1)), zatim integriše te podatke i smešta ih u RDF repozitorijum. Takođe, aplikacija korisniku obezbeđuje interfejs za pretragu knjiga po različitim kriterijumima.
+Aplikacija preuzima podatke iz tri različita izvora sa web-a ([Bokshare](http://developer.bookshare.org/), [ISBNdb](http://isbndb.com/), [Google books](https://developers.google.com/books/?csw=1)), zatim integriše te podatke i smešta ih u RDF repozitorijum. 
+
+[Bokshare](http://developer.bookshare.org/) pruža podatke o knjigama u XML formatu. U nastavku je dat primer poziva web servisa: [https://api.bookshare.org/book/search/category/Computers%20and%20Internet/page/1?api_key=mtdgrvurm6vhszb7xxtxc768](https://api.bookshare.org/book/search/category/Computers%20and%20Internet/page/1?api_key=mtdgrvurm6vhszb7xxtxc768). Parametar category govori o tome da se pretraga knjiga obavlja po kategoriji a za potrebe aplikacije pretraga knjiga se obavlja po kategoriji Computers and Internet. Preuzeti su sledeći podaci: naslov, opis knjige, isbn, autori i izdavač.
+
+[ISBNdb](http://isbndb.com/) api pruža podatke u XML formatu. Primer poziva api-a: [http://isbndb.com/api/books.xml?access_key=M94ZHX5G&results=texts&index1=subject_id&value1=computers&page_number=1](http://isbndb.com/api/books.xml?access_key=M94ZHX5G&results=texts&index1=subject_id&value1=computers&page_number=1). Parametar index1 predstavlja parametar po kome se vrši pretraga, u konkretnom slučaju u pitanju je subject_id odnosno kategorija. Value1 govori o tome po kojoj kategoriji se vrši pretraga. Za potrebe aplikacije pretraga se vrši po kategoriji Computers. Preuzeti su sledeći podaci: naslov, isbn, autor i izdavač. 
+
+[Google books](https://developers.google.com/books/?csw=1) api pruža podatke o knjigama u JSON formatu. Primer poziva ovog api-a: [https://www.googleapis.com/books/v1/volumes?q=+subject:computers&maxResults=40&key=%20AIzaSyCfhdVI8zPi7BAL_UdlAb406nYnN6-hSks&startIndex=1](https://www.googleapis.com/books/v1/volumes?q=+subject:computers&maxResults=40&key=%20AIzaSyCfhdVI8zPi7BAL_UdlAb406nYnN6-hSks&startIndex=1). Parametar q se odnosi na kriterijum pretrage, koji je i u ovom slučaju kategije knjige i to Computers kategorija. Preuzeti su sledeći podaci: naslov, opis, isbn, broj strana, autori, datum objavljivanja i izdavač. Maksimalan broj rezultata koji [Google books](https://developers.google.com/books/?csw=1) može da vrati po strani je 40.
+
+Kao što se može primetiti [Google books](https://developers.google.com/books/?csw=1) api pruža sve podatke koji su potrebni za aplikaciju, ali za određeni broj knjiga pojedini podaci ipak fale. Nakon preuzimanja podataka sa sva tri izvora, najpre se podaci koji fale za knjige preuzete sa [Google books](https://developers.google.com/books/?csw=1) api-a traže među podacima o knjigama preuzetih sa ostalih izvora. Nakon toga, integrišu se podaci preuzeti sa [Bokshare](http://developer.bookshare.org/) api-a i [ISBNdb](http://isbndb.com/) api-a da bi se po završetku integracije podaci smestili u RDF repozitorijum.
+
+Takođe, aplikacija korisniku obezbeđuje interfejs za pretragu knjiga po različitim kriterijumima.
 
 1. Korisnik najpre ulazi na stranicu aplikacije.
 ![Slika 2](SemanticWebApp/images/pocetna.jpg)

@@ -27,24 +27,24 @@ Klasa Person sadrži informaciju o imenu osobe.
 Klasa Organization sadrži informaciju o imenu organizacije.
 
 #3. Rešenje
-Aplikacija preuzima podatke iz tri različita izvora sa web-a ([Bokshare](http://developer.bookshare.org/), [ISBNdb](http://isbndb.com/), [Google books](https://developers.google.com/books/?csw=1)), zatim integriše te podatke i smešta ih u RDF repozitorijum. 
+Aplikacija preuzima podatke sa tri različita izvora na Webu ([Bokshare](http://developer.bookshare.org/), [ISBNdb](http://isbndb.com/), [Google books](https://developers.google.com/books/?csw=1)), zatim integriše te podatke i smešta ih u RDF repozitorijum. 
 
 [Bokshare](http://developer.bookshare.org/) pruža podatke o knjigama u XML formatu. U nastavku je dat primer poziva web servisa: 
 > [https://api.bookshare.org/book/search/category/Computers%20and%20Internet/page/1?api_key=mtdgrvurm6vhszb7xxtxc768](https://api.bookshare.org/book/search/category/Computers%20and%20Internet/page/1?api_key=mtdgrvurm6vhszb7xxtxc768) 
 
-Parametar category govori o tome da se pretraga knjiga obavlja po kategoriji a za potrebe aplikacije pretraga knjiga se obavlja po kategoriji Computers and Internet. Broj rezultata koji se može dobiti po strani je 100 pa je potrebno izvršiti više poziva api-a u zavisnosti od broja rezultata koji se želi dobiti. Za potrebe aplikacije odlučeno je da se preuzmu svi podaci vezani za konkretnu kategoriju. Preuzeti su sledeći podaci o knjigama: naslov, opis knjige, isbn, autori i izdavač.
+Parametar *category* govori o tome da se pretraga knjiga obavlja po kategoriji, a za potrebe aplikacije pretraga knjiga se obavlja po kategoriji 'Computers and Internet'. Broj rezultata koji se može dobiti po strani je 100, pa je potrebno izvršiti više poziva api-a u zavisnosti od broja rezultata koji se želi dobiti. Za potrebe aplikacije odlučeno je da se preuzmu svi podaci vezani za konkretnu kategoriju. Preuzeti su sledeći podaci o knjigama: naslov, opis knjige, isbn, autori i izdavač.
 
 [ISBNdb](http://isbndb.com/) api pruža podatke u XML formatu. Primer poziva api-a:
 > [http://isbndb.com/api/books.xml?access_key=M94ZHX5G&results=texts&index1=subject_id&value1=computers&page_number=1](http://isbndb.com/api/books.xml?access_key=M94ZHX5G&results=texts&index1=subject_id&value1=computers&page_number=1)
 
-Parametar index1 predstavlja parametar po kome se vrši pretraga, u konkretnom slučaju u pitanju je subject_id odnosno kategorija. Value1 govori o tome po kojoj kategoriji se vrši pretraga. Za potrebe aplikacije pretraga se vrši po kategoriji Computers. [ISBNdb](http://isbndb.com/) api vraća samo 10 rezultata po strani pa je potrebno izvršiti više poziva kako bi se preuzeo željeni broj rezultata. Preuzeti su sledeći podaci o knjigama: naslov, isbn, autor i izdavač. 
+Parametar *index1* predstavlja parametar po kojem se vrši pretraga; u konkretnom slučaju u pitanju je *subject_id*, odnosno kategorija. *Value1* govori o tome po kojoj kategoriji se vrši pretraga. Za potrebe aplikacije pretraga se vrši po kategoriji 'Computers'. [ISBNdb](http://isbndb.com/) api vraća samo 10 rezultata po strani pa je potrebno izvršiti više poziva kako bi se preuzeo željeni broj rezultata. Preuzeti su sledeći podaci o knjigama: naslov, isbn, autor i izdavač. 
 
 [Google books](https://developers.google.com/books/?csw=1) api pruža podatke o knjigama u JSON formatu. Primer poziva ovog api-a: 
 > [https://www.googleapis.com/books/v1/volumes?q=+subject:computers&maxResults=40&key=%20AIzaSyCfhdVI8zPi7BAL_UdlAb406nYnN6-hSks&startIndex=1](https://www.googleapis.com/books/v1/volumes?q=+subject:computers&maxResults=40&key=%20AIzaSyCfhdVI8zPi7BAL_UdlAb406nYnN6-hSks&startIndex=1) 
 
-Parametar q se odnosi na kriterijum pretrage, koji je i u ovom slučaju kategorija knjige i to Computers kategorija. Maksimalan broj rezultata koji [Google books](https://developers.google.com/books/?csw=1) može da vrati po strani je 40. Sa [Google books](https://developers.google.com/books/?csw=1) api-a su preuzeti sledeći podaci o knjigama: naslov, opis, isbn, broj strana, autori, datum objavljivanja i izdavač. 
+Parametar *q* se odnosi na kriterijum pretrage, koji je i u ovom slučaju kategorija knjige i to 'Computers' kategorija. Maksimalan broj rezultata koji [Google books](https://developers.google.com/books/?csw=1) može da vrati po strani je 40. Sa [Google books](https://developers.google.com/books/?csw=1) api-a su preuzeti sledeći podaci o knjigama: naslov, opis, isbn, broj strana, autori, datum objavljivanja i izdavač. 
 
-Kao što se može primetiti [Google books](https://developers.google.com/books/?csw=1) api pruža sve podatke koji su potrebni za aplikaciju, ali za određeni broj knjiga pojedini podaci ipak fale. Nakon preuzimanja podataka sa sva tri izvora, najpre se podaci koji fale za knjige preuzete sa [Google books](https://developers.google.com/books/?csw=1) api-a traže među podacima o knjigama preuzetih sa ostalih izvora. Nakon toga, integrišu se podaci preuzeti sa [Bokshare](http://developer.bookshare.org/) api-a i [ISBNdb](http://isbndb.com/) api-a da bi se po završetku integracije podaci smestili u RDF repozitorijum.
+Kao što se može primetiti, [Google books](https://developers.google.com/books/?csw=1) api pruža sve podatke koji su potrebni za aplikaciju, ali za određeni broj knjiga pojedini podaci nedostaju. Nakon preuzimanja podataka sa sva tri izvora, najpre se podaci koji nedostaju sa [Google books](https://developers.google.com/books/?csw=1) api-a traže među podacima o knjigama preuzetih sa ostalih izvora. Nakon toga, integrišu se podaci preuzeti sa [Bokshare](http://developer.bookshare.org/) api-a i [ISBNdb](http://isbndb.com/) api-a da bi se po završetku integracije podaci smestili u RDF repozitorijum.,
 
 Takođe, aplikacija korisniku obezbeđuje interfejs za pretragu knjiga po različitim kriterijumima.
 
@@ -67,7 +67,7 @@ Prilikom realizacije web aplikacije korišćene su sledeće Java tehnologije:
 zasnivaju na Java tehnologiji. Jedna od najvećih prednosti JSF okvira je ta što nudi jasnu odvojenost između prezentacije i ponašanja sistema.
 
 2. [Enterprise JavaBeans (EJB)](http://www.oracle.com/technetwork/java/javaee/ejb/index.html) - za realizaciju poslovne logike aplikacije.
-[Enterprise JavaBeans (EJB)](http://www.oracle.com/technetwork/java/javaee/ejb/index.html) su JavaEE server-side komponente koje se izvršavaju unutar EJB kontejnerai učauruju poslovnu logiku JavaEE aplikacija. Ove komponente su skalabilne, transakcione,višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ovi pojednostavljuju razvoj distribuiranih aplikacija iz sledecih razloga:
+[Enterprise JavaBeans (EJB)](http://www.oracle.com/technetwork/java/javaee/ejb/index.html) su JavaEE server-side komponente koje se izvršavaju unutar EJB kontejnera i učauruju poslovnu logiku JavaEE aplikacija. Ove komponente su skalabilne, transakcione, višenitne i mogu im pristupiti više korisnika u isto vreme. Enterprise bean-ovi pojednostavljuju razvoj distribuiranih aplikacija iz sledecih razloga:
 	* EJB kontejner obezbeđuje sistemske servise (npr.upravljanje transakcijama) enterprise
 	bean-ovima, dok se programer bean-a moze koncentrisati na rešavanje poslovnih
 	problema.
@@ -102,7 +102,7 @@ Aplikacija koristi i [Jenabean](https://code.google.com/p/jenabean/) biblioteku,
 * čuva relacije ka drugim objektima
 * omogućava ponovno učitavanje objekata.
 
-Ispod je dat primer mapiranja korišćenjem anotacija:
+U nastavku je dat primer mapiranja korišćenjem anotacija:
 
 ```
     @Namespace(Constants.SCHEMA)
@@ -110,16 +110,22 @@ Ispod je dat primer mapiranja korišćenjem anotacija:
     public class Book extends Thing{
     	    @RdfProperty(Constants.SCHEMA+"isbn")
     	    private String isbn;
+    	    
 	    @RdfProperty(Constants.SCHEMA+"name")
 	    private String title;
+	    
 	    @RdfProperty(Constants.SCHEMA+"numberOfPages")
 	    private int numberOfPages;
+	    
 	    @RdfProperty(Constants.SCHEMA+"author")
 	    private List<Person> authors;
+	    
 	    @RdfProperty(Constants.SCHEMA+"publisher")
 	    private Organization publisher;
+	    
 	    @RdfProperty(Constants.SCHEMA+"datePublished")
 	    private Date datePublished;
+	    
 	    @RdfProperty(Constants.SCHEMA+"description")
 	    private String description;
 	    ...

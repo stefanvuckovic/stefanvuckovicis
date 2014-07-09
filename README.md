@@ -56,6 +56,205 @@ Takođe, aplikacija korisniku obezbeđuje interfejs za pretragu knjiga po razli�
 
 ![Slika 4](SemanticWebApp/images/rezultatpretrage.jpg)
 
+Kao što se može primetiti korisnik može pretraživati knjige po raznim kriterijumima. S obzirom na veliki broj knjiga koji se čuva u repozitorijumu, potrebno je obezbediti parcijalno učitavanje podataka, odnosno učitavanje podataka samo za stranu koju korisnik zahteva. Ono što se izvršava u pozadini prilikom svake pretrage korisnika je SPARQL upit nad lokalnim RDF repozitorijumom. Uzevši u obzir zahteve aplikacije, da bi se SPARQL upit izvršio neophodno je proslediti mu više parametara: kriterijume pretrage koje korisnik unosi (isbn knjige, naslov, ime autora, gornja i donja granica datuma izdavanja knjige), zatim broj rezultata koji je korisnik izabrao da se prikažu na strani, kao i offset (za koju stranu korisnik želi da vidi podatke, odnosno počevši od kog rezultata se vrši pretraga), kao i polje po kome korisnik želi da sortira rezultate i u kom redosledu (rastući ili opadajući). Uz pomoć svih ovih parametara se formira upit koji se zatim izvršava nad RDF repozitorijumom i vraćaju se podaci o knjigama koje zadovoljavaju navedene kriterijume. U nastavku je dat opisani upit:
+
+```
+public Collection<String> searchBooks(String term, Date dateFrom, Date dateTo, int off, int lim, String sortField, String sortOrder) {
+        Collection<String> rezultat = null;
+        String limit = null;
+        String offset = null;
+        String sort = null;
+        String where = null;
+        String date = "";
+
+        String query
+                = "PREFIX schema: <" + Constants.SCHEMA + "> "
+                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"
+                + "SELECT DISTINCT ?book ";
+                  
+
+        where = "WHERE { "
+                + "?book a schema:Book;";
+
+        if (sortField != null) {
+            sort = "?" + sortField;
+            if (sortField.equals("title")) {
+                where += " schema:name " + sort + ";";
+            } else {
+                where += " schema:datePublished " + sort + ";";
+
+            }
+
+            if (sortOrder != null) {
+                if (sortOrder.equals("DESCENDING")) {
+                    sort = " DESC(" + sort + ")";
+                }
+            }
+            sort = " ORDER BY " + sort;
+            System.out.println("SORT " + sort);
+
+        }
+
+        if (dateFrom != null) {
+            where += " schema:datePublished ?date; ";
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String from = df.format(dateFrom) + "T00:00:00";
+            date = "?date>=\"" + from + "\"^^xsd:dateTime";
+                                
+
+        }
+        if (dateTo != null) {
+            if (date.isEmpty()) {
+                System.out.println("prazan string ");
+                where += " schema:datePublished ?date; ";
+
+            } else {
+                date += " && ";
+            }
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String to = df.format(dateTo) + "T23:59:59";
+            date += " ?date <= \"" + to + "\"^^xsd:dateTime ";
+        }
+        if (!date.isEmpty()) {
+            date = "FILTER(" + date + ")";
+        }
+
+        where += "{"
+                + "{?book schema:isbn \"" + term + "\"^^xsd:string.}"
+                + "UNION"
+                + "{?book schema:name ?name. FILTER regex(?name, \"" + term + "\", \"i\")}"
+                + "UNION"
+                + "{?book schema:author ?author. ?author schema:name ?authorname. FILTER (regex(?authorname, \"" + term + "\",\"i\") )}}"
+                + date + "}";
+                          
+
+        if (lim != -1) {
+            limit = " LIMIT " + lim;
+        }
+        if (off != -1) {
+            offset = " OFFSET " + off;
+        }
+
+        query += where;
+        if (sort != null) {
+            query += sort;
+        }
+        if (offset != null) {
+            query += offset;
+        }
+        if (limit != null) {
+            query += limit;
+        }
+        
+
+        System.out.println("UPIT: " + query);
+        RDFModel.getInstance().beginReadTransaction();
+        try {
+            rezultat = queryExecutor
+                    .executeSelectQueryOverModel(query, "book", RDFModel.getInstance().getModel());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            RDFModel.getInstance().endTransaction();
+        }
+
+        return rezultat;
+    }
+    
+```
+
+Pošto je potrebno obezbediti i paginaciju, potrebno je pri svakom upitu imati informaciju i o ukupnom broju rezultata koji zadovoljavaju korisnikove kriterijume pa je pri svakoj novoj pretrazi neophodno izvršiti i SPARQL upit koji vraća broj knjiga koje zadovoljavaju navedene kriterijume. Ovaj upit se ne poziva pri svakom zahtevu korisnika. Naime, poziva se samo za zahteve koji mogu da promene trenutni broj rezultata, kao što je unošenje novih kriterijuma pretrage ili promena polja po kome se sortiraju rezultati. Zahtevi korisnika vezani za broj strane za koju želi da vidi podatke ili redosled sortiranja ne menjaju broj rezultata pa samim tim i ne zahtevaju ponovno brojanje rezultata. Ovaj upit je veoma sličan prethodnom upitu, razlika je jedino u tome što on ne uzima u obzir broj rezultata koji korisnik zahteva, offset, kao ni redosled sortiranja. U nastavku je prikazan ovaj SPARQL upit:
+
+```
+
+ public int countBooks(String term, Date dateFrom, Date dateTo, String sortField) {
+        List<String> result = null;
+        String sort = null;
+        String where = null;
+        String date = "";
+          
+
+        String query
+                = "PREFIX schema: <" + Constants.SCHEMA + "> "
+                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+                + "SELECT (COUNT(DISTINCT ?book) as ?count) ";
+
+        
+         where = "WHERE { "
+                + "?book a schema:Book;";
+
+        if (sortField != null) {
+            sort = "?" + sortField;
+            if (sortField.equals("title")) {
+                where += " schema:name " + sort + ";";
+            } else {
+                where += " schema:datePublished " + sort + ";";
+
+            }
+
+            sort = " ORDER BY " + sort;
+            
+
+        }
+
+        if (dateFrom != null) {
+            where += " schema:datePublished ?date; ";
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String from = df.format(dateFrom) + "T00:00:00";
+            date = "?date>=\"" + from + "\"^^xsd:dateTime";
+                                
+
+        }
+        if (dateTo != null) {
+            if (date.isEmpty()) {
+                System.out.println("prazan string ");
+                where += " schema:datePublished ?date; ";
+
+            } else {
+                date += " && ";
+            }
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String to = df.format(dateTo) + "T23:59:59";
+            date += " ?date <= \"" + to + "\"^^xsd:dateTime ";
+        }
+        if (!date.isEmpty()) {
+            date = "FILTER(" + date + ")";
+        }
+
+        where += "{"
+                + "{?book schema:isbn \"" + term + "\"^^xsd:string.}"
+                + "UNION"
+                + "{?book schema:name ?name. FILTER regex(?name, \"" + term + "\", \"i\")}"
+                + "UNION"
+                + "{?book schema:author ?author. ?author schema:name ?authorname. FILTER (regex(?authorname, \"" + term + "\",\"i\") )}}"
+                + date + "}";
+                          
+        
+        
+        query += where;
+        if (sort != null) {
+            query += sort;
+        }
+
+        System.out.println("Broj rezultata: " + query);
+        RDFModel.getInstance().beginReadTransaction();
+        try {
+            result = (List<String>) queryExecutor
+                    .executeSelectQueryOverModel(query, "?count", RDFModel.getInstance().getModel());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            RDFModel.getInstance().endTransaction();
+        }
+
+        String s = result.get(0);
+        int i = Integer.parseInt(s);
+        return i;
+    }
+    
+```
 
 #4. Implementacija
 Aplikacija je napisana u programskom jeziku Java. 

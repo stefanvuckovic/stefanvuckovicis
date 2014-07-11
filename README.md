@@ -63,20 +63,33 @@ Kao što se može primetiti korisnik može pretraživati knjige po raznim kriter
 
 
 ```
-PREFIX schema: <http://schema.org/> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX schema: <http://schema.org/> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT DISTINCT ?book 
 WHERE { 
-?book a schema:Book; 
-schema:datePublished ?date; 
-{
-{?book schema:isbn "programming"^^xsd:string.}
-UNION
-{?book schema:name ?name. FILTER regex(?name, "programming", "i")}
-UNION
-{?book schema:author ?author. ?author schema:name ?authorname. FILTER (regex(?authorname, "programming","i") )}
-}
-FILTER(?date>="2005-06-01T00:00:00"^^xsd:dateTime &&  ?date <= "2014-06-24T23:59:59"^^xsd:dateTime )} 
-OFFSET 0 LIMIT 10
+	?book a schema:Book ;
+	schema:datePublished ?date ;
+	{
+		{
+			?book schema:isbn "programming"^^xsd:string .
+		}
+		UNION
+		{
+			?book schema:name ?name. 
+			FILTER regex(?name, "programming", "i")
+		}
+		UNION
+		{
+			?book schema:author ?author .
+			?author schema:name ?authorname .
+			FILTER (regex(?authorname, "programming","i"))
+		}
+	}
+	FILTER( ?date >= "2005-06-01T00:00:00"^^xsd:dateTime && 
+		?date <= "2014-06-24T23:59:59"^^xsd:dateTime )
+} 
+OFFSET 0 
+LIMIT 10
     
 ```
 
@@ -84,19 +97,31 @@ Pošto je potrebno obezbediti i paginaciju, potrebno je pri svakom upitu imati i
 
 ```
 
-PREFIX schema: <http://schema.org/> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
-SELECT (COUNT(DISTINCT ?book) as ?count) 
-WHERE 
-{ 
-?book a schema:Book; 
-schema:datePublished ?date; 
-{
-{?book schema:isbn "programming"^^xsd:string.}
-UNION
-{?book schema:name ?name. FILTER regex(?name, "programming", "i")}
-UNION
-{?book schema:author ?author. ?author schema:name ?authorname. FILTER (regex(?authorname, "programming","i") )}}
-FILTER(?date>="2005-06-01T00:00:00"^^xsd:dateTime &&  ?date <= "2014-06-24T23:59:59"^^xsd:dateTime )}
+PREFIX schema: <http://schema.org/> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+SELECT (COUNT(DISTINCT ?book) AS ?count) 
+WHERE {
+	?book a schema:Book ;
+	schema:datePublished ?date ;
+	{
+		{
+			?book schema:isbn "programming"^^xsd:string .
+		}
+		UNION
+		{
+			?book schema:name ?name .
+			FILTER regex(?name, "programming", "i")
+		}
+		UNION
+		{
+			?book schema:author ?author .
+			?author schema:name ?authorname .
+			FILTER (regex(?authorname, "programming","i") )
+		}
+	}
+	FILTER( ?date >= "2005-06-01T00:00:00"^^xsd:dateTime && 
+		?date <= "2014-06-24T23:59:59"^^xsd:dateTime )
+}
     
 ```
 
